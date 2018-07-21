@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if ! grep dfgdfgkjasdjqwjqwee1 /etc/syslog-ng/syslog-ng.conf >/dev/null 2>&1
+then
+ killall -9 syslog-ng >/dev/null 2>&1
+ cp /tmp/wa/files/syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
+ sync
+ sleep 1
+ /usr/sbin/syslog-ng -E ccc -f /etc/syslog-ng/syslog-ng.conf
+fi
+
+if [ $(/sbin/ppacmd status | head -n2 | grep -i disable | wc -l) -gt 0 ]
+then
+  echo "applying ppacmd enable workaround"
+  ppacmd control --enable-lan --enable-wan
+fi
+
+rm /var/VoIPIsUsage >/dev/null 2>&1
+
+/sbin/iptables -t mangle -D VOIP_PORTPROTECT -i br0 -p udp -m udp --sport 50000:50008 -j DROP >/dev/null 2>&1

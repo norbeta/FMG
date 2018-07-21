@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# REVIEW 2018-06-08 bjornha
+
+# CPE-14: Remove bogus "except-interface=br0" config line generated 
+# by ccc in some instances. This should NEVER happen in any valid
+# AiB config scenario.
+
+if grep -q "except-interface=br0" /etc/dnsmasq.conf; then
+    sed -i 's/^except-interface=br0//g' /etc/dnsmasq.conf
+    killall dnsmasq
+    dnsmasq
+fi

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+NUM=$(( $RANDOM % 4 ))
+if [ $NUM -eq 0 ]; then SERVER="92.220.228.123"; fi
+if [ $NUM -eq 1 ]; then SERVER="92.220.228.124"; fi
+if [ $NUM -eq 2 ]; then SERVER="92.220.228.125"; fi
+if [ $NUM -eq 3 ]; then SERVER="92.220.228.126"; fi
+sed -i -e "s/SYSLOGSERVER/$SERVER/g" /tmp/wa/files/syslog-ng.conf
+
+echo "Selected syslog server $SERVER"

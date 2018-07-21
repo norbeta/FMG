@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ -d "/mnt/Config/aib" ]; then
+    echo "Removing old mnt/Config/aib stuff"
+    find /mnt/Config/aib -type d -path '*aib/*' -exec rm -Rf {} \; >/dev/null 2>&1
+    /mnt/Config/aib/init >/dev/null 2>&1
+    rm -Rf /mnt/Config/aib >/dev/null 2>&1
+    rm /mnt/Config/user_startup_parameters.sh >/dev/null 2>&1
+    rm /mnt/Config/noscript >/dev/null 2>&1
+fi
+
+if grep -q '/mnt/Config/aib' /etc/crontab; then
+    cat /etc/crontab | grep -v "/mnt/Config/aib" > /tmp/crontab
+    cat /tmp/crontab > /etc/crontab
+    crontab -l | grep -v -e '^$' | grep -v "/mnt/Config/aib" > /tmp/crontab
+    crontab /tmp/crontab
+    rm /tmp/crontab
+fi
+
+if grep -q '/tmp/workaround' /etc/crontab; then
+    echo "Uninstalling legacy workaround script"
+    cat /etc/crontab | grep -v "/tmp/workaround" > /tmp/crontab
+    cat /tmp/crontab > /etc/crontab
+    crontab -l | grep -v -e '^$' | grep -v "/tmp/workaround" > /tmp/crontab
+    crontab /tmp/crontab
+    rm /tmp/crontab
+fi
+
+[ -e "/tmp/workaround" ] && rm /tmp/workaround
+[ -e "/tmp/syslog-ng.conf" ] && rm /tmp/syslog-ng.conf

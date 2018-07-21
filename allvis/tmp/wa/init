@@ -1,0 +1,14 @@
+#!/bin/sh
+
+export WAROOT=/tmp/wa
+export WALOG=$WAROOT/wa.log
+>$WALOG
+
+walog() { while read i; do echo "[$(date)] [$1] $i"; done >> $WALOG ; }
+
+for x in $WAROOT/init.d/*; do
+    if [ -x $x ]; then
+        echo "Executing $x" 2>&1 | walog init
+        $x | walog $x
+    fi
+done

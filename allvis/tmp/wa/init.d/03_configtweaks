@@ -1,0 +1,18 @@
+#!/bin/sh
+
+cat <<EOF >/tmp/sca.ccc
+RDMNAME config;
+REQUEST;
+SEL InternetGatewayDevice.X_ZyXEL_Ext.SmartChannel;
+SET Enable boolean 0;
+SEL InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_ZyXEL_DNS.1;
+SET ServerType string FromISP;
+SEL InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_ZyXEL_DNS.2;
+SET ServerType string FromISP;
+SEL InternetGatewayDevice.LANDevice.1.LANHostConfigManagement.X_ZyXEL_DNS.3;
+SET ServerType string FromISP;
+SAVE;
+SEND;
+EOF
+/usr/bin/ccctest -f /tmp/sca.ccc >/dev/null 2>&1
+rm /tmp/sca.ccc

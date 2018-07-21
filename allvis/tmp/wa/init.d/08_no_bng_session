@@ -1,0 +1,10 @@
+#!/bin/sh
+# CPE-174 send SIGUSR1 to udhcpc to force renew, recreate BNG session
+
+PID=$(ps | awk '/[e]th1.102/ {print $1}')
+
+if [ -n "$PID" ]; then
+    if ! ping -c 1 8.8.8.8 >/dev/null 2>&1; then
+        kill -USR1 $PID
+    fi
+fi

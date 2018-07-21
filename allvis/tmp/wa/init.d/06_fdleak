@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# REVIEW 2018-06-08 bjornha
+
+# TODO This can be removed after first mass rollout of WA set.
+
+zytr69_is_listening() {
+    FD=$(awk '/00:1DFC / {print $10}' /proc/net/tcp)
+    PIDS=$(pgrep zytr069main)
+    [ "$FD" = "" ] || [ "$PIDS" = "" ] && return 1
+    for pid in $(pgrep zytr069main); do
+        ls /proc/$pid/fd -l | grep -q $FD && return 0
+    done
+    return 1
+}
+
+if ! zytr69_is_listening; then
+    echo "Initiating zytr069 and syslog-ng restart"
+    killall -9 syslog-ng >/dev/null 2>&1    
+    killall -9 zytr069main
+    cd /tmp && nohup zytr069main &
+    /usr/sbin/syslog-ng -E ccc -f /etc/syslog-ng/syslog-ng.conf
+fi

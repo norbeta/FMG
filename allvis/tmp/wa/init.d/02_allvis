@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if ! ip ro get 79.160.115.252 | grep -q eth1\.100; then
+    /usr/sbin/ip ro add 79.160.115.252 via $(/usr/sbin/ip ro show dev eth1.100 | grep -m 1 via | cut -d ' ' -f3) dev eth1.100 >/dev/null 2>&1
+    killall -9 allvis >/dev/null 2>&1
+fi
+
+ACOUNT=$(/bin/ps | /bin/grep -c [a]llvis)
+
+if [ $ACOUNT -gt 0 ]; then
+        echo "WARNING: Killing already existing allvis instance"
+    if [ $ACOUNT -gt 1 ]; then
+        killall -9 allvis >/dev/null 2>&1
+        /tmp/allvis -b >/dev/null 2>&1
+    fi
+else
+    killall -9 allvis >/dev/null 2>&1 
+    /tmp/allvis -b >/dev/null 2>&1
+fi
+
+if ! grep -q allvis /etc/process_watchdog.conf; then
+    echo "allvis /tmp/allvis -b" >>/etc/process_watchdog.conf
+fi

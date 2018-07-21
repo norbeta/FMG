@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Copy syslog.log and syslog.log.1 to /tmp during init to save early boot 
+# dmesg/log for later debug
+
+if ! [ -f "/tmp/syslog-dump" ]; then
+    for i in /var/log/syslog.log*; do
+        echo $i
+        [ -f $i ] && cat $i >> /tmp/syslog-dump
+    done
+fi
+
